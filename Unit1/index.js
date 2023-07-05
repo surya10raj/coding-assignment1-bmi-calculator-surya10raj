@@ -1,43 +1,25 @@
-
 const express = require("express");
-const bodyparser = require("body-parser");
-const port = 7777;
+const bodyParser = require("body-parser");
+
 const app = express();
-app.use(bodyparser.urlencoded({ extended: true }));
+const port = 7777;
 
-app.get("/", function (req, res) {
-	res.sendFile(__dirname + "/index.html");
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
 });
 
-app.post("/", function (req, res) {
-	heigh = parseFloat(req.body.Height);
-	weigh = parseFloat(req.body.Weight);
-	bmi = weigh / (heigh * heigh);
+app.post("/", (req, res) => {
+  const { name, height, weight } = req.body;
+  const heightInMeters = parseFloat(height) / 100;
+  const weightInKg = parseFloat(weight);
 
-	bmi = bmi.toFixed();
+  const bmi = weightInKg / (heightInMeters * heightInMeters);
 
-	req_name = req.body.Name;
-	
-	if (bmi < 19) {
-		res.send("<h3>hey! " + req_name +
-				" your BMI is around: " + bmi +
-				"<centre><h1>You are Underweight!");
-	} else if (19 <= bmi && bmi < 25) {
-		res.send("<h3>hey! " + req_name +
-				" your BMI is around: " + bmi +
-				"<centre><h1>You are Normalweight!");
-	} else if (25 <= bmi && bmi < 30) {
-		res.send("<h3>hey! " + req_name +
-				" your BMI is around: " + bmi +
-				"<centre><h1>You are Overweight!");
-	} else {
-		res.send("<h3>hey! " + req_name +
-				" your BMI is around: " + bmi +
-				"<centre><h1>You are Obese!");
-	}
+  res.send(`<h3>Hey ${name}, your BMI is: ${bmi.toFixed(2)}</h3>`);
 });
 
-
-app.listen(7777, function () {
-	console.log("port active at 7777");
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
 });
